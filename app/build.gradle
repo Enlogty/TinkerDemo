@@ -1,0 +1,53 @@
+apply plugin: 'com.android.application'
+apply from: 'tinkerpatch.gradle'
+android {
+    compileSdkVersion 26
+    defaultConfig {
+        applicationId "com.example.enlogty.tinkerdemo"
+        minSdkVersion 15
+        targetSdkVersion 26
+        versionCode 1
+        versionName "1.0"
+        multiDexEnabled true
+        multiDexKeepProguard file("tinkerMultidexKeep.pro") //keep specific classes using proguard syntax
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled true
+            shrinkResources true
+            signingConfig signingConfigs.debug
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguardRules.pro'
+        }
+        debug {
+            debuggable true
+            minifyEnabled false
+            signingConfig signingConfigs.debug
+        }
+    }
+    signingConfigs {
+        debug {
+            storeFile rootProject.file("keystore/debug.keystore")
+        }
+    }
+
+    sourceSets {
+        main {
+            jniLibs.srcDirs = ['libs']
+        }
+    }
+}//android--end
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation 'com.android.support:appcompat-v7:26.1.0'
+    implementation "com.android.support:multidex:1.0.2"
+    //provided("com.tinkerpatch.tinker:tinker-android-anno:1.9.2"){changing = true}
+     implementation("com.tinkerpatch.sdk:tinkerpatch-android-sdk:1.2.2"){changing = true}
+    annotationProcessor("com.tinkerpatch.tinker:tinker-android-anno:1.9.2") { changing = true }
+    compileOnly("com.tinkerpatch.tinker:tinker-android-anno:1.9.2") { changing = true }
+    testImplementation 'junit:junit:4.12'
+    androidTestImplementation 'com.android.support.test:runner:1.0.1'
+    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
+}
